@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Cross-Platform">
+    <test name="MyAccountTest">
+        <parameter name="baseUrl"  value = "https://staging.mektoube.fr"></parameter>
+        <parameter name="platform" value="realDevice"></parameter>
+        <parameter name="method" value="webTab"></parameter>
+        <parameter name="name" value="Galaxy S6 edge"></parameter>
+        <parameter name="version" value="7.0"></parameter>
+        <parameter name="uid" value="04157df48c830518"></parameter>
+        <!--        <parameter name="platform" value="simulator"></parameter>-->
+        <!--        <parameter name="method" value="web"></parameter>-->
+        <!--        <parameter name="name" value="iPhone 13 Pro Max"></parameter>-->
+        <!--        <parameter name="version" value="15.2"></parameter>-->
+        <!--        <parameter name="uid" value="718BD862-A5DB-4F0E-B518-75F3DC72DEA5"></parameter>-->
+
+        <classes>
+            <class name="com.mektoube.loginTest" >
+                <methods>
+                    <include name="testCase_PI_1"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

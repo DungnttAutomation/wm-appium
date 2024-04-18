@@ -1,5 +1,6 @@
 package com.mektoube.steps;
 
+import com.mektoube.pages.BasePage;
 import com.mektoube.pages.LoginPage;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -8,7 +9,7 @@ import io.cucumber.java.en.When;
 
 public class LoginPageSteps {
     LoginPage loginPage = new LoginPage();
-    
+    BasePage basePage = new BasePage();
     @And("^I am on the login page$")
     public void iAmOnTheLoginPage() {
         loginPage.iAmOnTheLoginPage();
@@ -20,33 +21,33 @@ public class LoginPageSteps {
     }
 
     @When("login with username or email {string} and password {string}")
-    public void loginWithUsernameOrEmailAndPassword(String email, String password) {
-        loginPage.loginWithUsernameOrEmailAndPassword(email, password);
+    public void loginWithUsernameOrEmailAndPassword(String email, String password) throws InterruptedException {
+//        loginPage.login(email, password);
+        basePage.openUrl();
+        basePage.waitUntilDisplayElementByXpath("MOBILE_BTN_LOGIN");
+        basePage.click("MOBILE_BTN_LOGIN");
+//        Thread.sleep(10000);
+        basePage.waitAboutSeconds(5);
+        basePage.webDriverWaitForElementPresentByCss("LOGIN_TXT_EMAIL",10);
+        basePage.sendKeysByCss("LOGIN_TXT_EMAIL", email);
+        basePage.sendKeysByCss("LOGIN_TXT_PASSWORD", password);
+        basePage.clickByCss("LOGIN_BTN");
+        basePage.untilJqueryIsDone(50L);
     }
 
-    @Given("I login with account {string} and {string} and {string} permission")
-    public void iLoginWithAccountAndAndPermission(String email, String pass, String location) {
-        loginPage.iLoginWithAccountAndDisablePermission(email,pass,location);
-    }
+
     @Then("I check error messages")
     public void iCheckErrorMessages() {
         loginPage.iCheckErrorMessages();
     }
 
-    @Then("Messages error is display {string}")
-    public void messagesErrorIsDisplay(String errorMsg) {
-        loginPage.messagesErrorIsDisplay(errorMsg);
-    }
 
     @When("login with email {string} and password {string}")
     public void loginWithEmailAndPassword(String email, String password) {
         loginPage.loginWithEmailAndPassword(email, password);
     }
 
-    @Given("login with phone nb {string} of country {string} and password {string}")
-    public void loginWithPhoneNbOfCountryAndPassword(String phoneNb, String country, String password) {
-        loginPage.loginWithPhoneNbOfCountryAndPassword(phoneNb,country,password);
-    }
+
 
     @Then("show error message {string} of element {string} when enter invalid phone number")
     public void showErrorMessageOfElementWhenEnterInvalidPhoneNumber(String message, String element) {

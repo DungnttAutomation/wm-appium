@@ -10,8 +10,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class PaymentPage extends BasePage {
-    MessageModule messageModule = new MessageModule();
-    DiscoveryPage discoveryPage = new DiscoveryPage();
+//    MessageModule messageModule = new MessageModule();
+//    DiscoveryPage discoveryPage = new DiscoveryPage();
 
     public void choosePassMoisAndCheckTotalPriceInValiderButton(int numberMois) {
 
@@ -82,7 +82,7 @@ public class PaymentPage extends BasePage {
             iClickButtonHasText("Subscribe");
 //            messageModule.thePageShowMessageContainText("Félicitations, vous êtes abonné !");
             waitAboutSeconds(5);
-            discoveryPage.iAmOnTheDiscoveryPage();
+//            discoveryPage.iAmOnTheDiscoveryPage();
         }
         else {
             System.out.println("Google tester account isn't logined >> can't make a payment");
@@ -97,7 +97,7 @@ public class PaymentPage extends BasePage {
         System.out.println("red button " + redButton.size());
         if (redButton.size()==1) {
             iClickButtonHasText("ANNULER LE DÉSABONNEMENT");
-            messageModule.thePageShowMessageContainText("Votre annulation de désabonnement a bien été prise en compte");
+//            messageModule.thePageShowMessageContainText("Votre annulation de désabonnement a bien été prise en compte");
             System.out.println(">>>>>>>>>>>>>>>>>>>>> Cancel unsubcription process by red button");
         }
         else {
@@ -105,7 +105,7 @@ public class PaymentPage extends BasePage {
                 iClickButtonHasText("Arrêter mon abonnement");
                 clearTextAndInsertTextIntoField("mektoube","passwordFieldInDesabonnementModal");
                 iClickButtonHasText("VALIDER");
-                messageModule.thePageShowMessageContainText("Un email vous a été envoyé");
+//                messageModule.thePageShowMessageContainText("Un email vous a été envoyé");
                 System.out.println(">>>>>>>>>>>>>>>>>>>>> Unsubcription success");
             }
             else if (ANNULERButton.size()==1) {

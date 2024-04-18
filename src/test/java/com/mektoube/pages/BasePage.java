@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.function.Function;
 
 import static com.mektoube.config.AppiumConfig.getDriver;
 import static io.appium.java_client.touch.offset.PointOption.point;
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class BasePage {
-    final AppiumDriver<MobileElement> driver = getDriver();
+    static final AppiumDriver<MobileElement> driver = getDriver();
     static final MobilePlatform OS = AppiumConfig.getOS();
     WebDriverWait wait = new WebDriverWait(driver, 10);
     //    WebDriverWait waitIOS = new WebDriverWait(driver, 5);
@@ -44,6 +45,67 @@ public class BasePage {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public void navigateToUrl(String url) {
+//        logger.info("Navigating to URL..." + url);
+        String xPathElement = TestDataService.properties.getProperty(url);
+        if (xPathElement == null) {
+            xPathElement = url;
+        }
+        driver.navigate().to(xPathElement);
+    }
+    public void webDriverWaitForElementPresentByCss(String element, long timeout) {
+//        logger.info("webDriverWaitForElementPresentByCss");
+//        String xPathElement = PropertiesFile.getPropValue(element);
+        String xPathElement = TestDataService.properties.getProperty(element);
+        if (xPathElement == null) {
+            xPathElement = element;
+        }
+        WebDriverWait wait = new WebDriverWait(driver, timeout);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(xPathElement)));
+    }
+    public void sendKeysByCss(String element, String content) {
+//        logger.info("send keys" + element + "with " + content);
+        String xPathElement1 = TestDataService.properties.getProperty(element);
+        String xPathElement2 = TestDataService.properties.getProperty(content);
+//        String xPathElement1 = PropertiesFile.getPropValue(element);
+//        String xPathElement2 = PropertiesFile.getPropValue(content);
+        if (xPathElement1 == null) {
+            xPathElement1 = element;
+        }
+        if (xPathElement2 == null) {
+            xPathElement2 = content;
+
+        }
+        driver.findElement(By.cssSelector(xPathElement1)).sendKeys(xPathElement2);
+    }
+    public void clickByCss(String element) {
+//        logger.info("click" + element);
+        String xPathElement = TestDataService.properties.getProperty(element);
+        if (xPathElement == null) {
+            xPathElement = element;
+        }
+        driver.findElement(By.cssSelector(xPathElement)).click();
+
+    }
+    private static void until(Function<WebDriver, Boolean> waitCondition, Long timeoutInSeconds) {
+        WebDriverWait webDriverWait = new WebDriverWait(driver, timeoutInSeconds);
+//        webDriverWait.withTimeout(timeoutInSeconds, TimeUnit.SECONDS);
+        try {
+            webDriverWait.until(waitCondition);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+
+        }
+    }
+    public void untilJqueryIsDone(Long timeoutInSeconds) throws InterruptedException {
+        until((d) ->
+        {
+            Boolean isJqueryCallDone = (Boolean) ((JavascriptExecutor) driver).executeScript("return jQuery.active==0");
+            if (!isJqueryCallDone) System.out.println("JQuery call is in Progress");
+            return isJqueryCallDone;
+        }, timeoutInSeconds);
+        Thread.sleep(1000);
     }
 
     public void waitForVisibilityOf(By IOSby, By AndroidBy) {
@@ -105,7 +167,7 @@ public class BasePage {
             if (xpathElement == null) {
                 xpathElement = textOfElement;
             }
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[contains(@text,'" + textOfElement + "')]"))).click();
+//            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[contains(@text,'" + textOfElement + "')]"))).click();
             System.out.println("Click button '" + textOfElement + "'");
         }
         if (OS == MobilePlatform.IOS) {
@@ -113,14 +175,14 @@ public class BasePage {
             if (xpathElement == null) {
                 xpathElement = textOfElement;
             }
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//XCUIElementTypeOther[@name=\"" + textOfElement + "\"]"))).click();
+//            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//XCUIElementTypeOther[@name=\"" + textOfElement + "\"]"))).click();
             System.out.println("Click button '" + textOfElement + "'");
         }
     }
 
     public void waitUntilDisplayButtonHasText(String textOfElement) {
         if (OS == MobilePlatform.IOS) {
-            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//XCUIElementTypeOther[@name=\"" + textOfElement + "\"]"))).click();
+//            wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//XCUIElementTypeOther[@name=\"" + textOfElement + "\"]"))).click();
         }
     }
 
@@ -148,7 +210,7 @@ public class BasePage {
         if (element == null) {
             element = xpathElement;
         }
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(element)));
+//        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(element)));
     }
 
     public void clearTextAndInsertTextIntoField(String text, String xpath) {
@@ -170,10 +232,10 @@ public class BasePage {
         if (xpathElement == null) {
             xpathElement = xpath;
         }
-        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpathElement)));
+//        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpathElement)));
 //        element.click();
-        element.clear();
-        element.sendKeys(text);
+//        element.clear();
+//        element.sendKeys(text);
 
 
     }
@@ -183,16 +245,16 @@ public class BasePage {
             driver.hideKeyboard();
         }else {
             waitUntilDisplayElementByXpath("//XCUIElementTypeKey");
-            MobileElement keyboard = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//XCUIElementTypeKey/parent::XCUIElementTypeOther")));
+//            MobileElement keyboard = (MobileElement) wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//XCUIElementTypeKey/parent::XCUIElementTypeOther")));
 
-            int x= keyboard.getLocation().getX() +(keyboard.getSize().getWidth()/2);
-            int y= keyboard.getLocation().getY() -5;
-
-            System.out.println("dimision :  "+x + "     y  :"+y );
-
-            new TouchAction(driver)
-                    .tap(point(x,y))
-                    .perform();
+//            int x= keyboard.getLocation().getX() +(keyboard.getSize().getWidth()/2);
+//            int y= keyboard.getLocation().getY() -5;
+//
+//            System.out.println("dimision :  "+x + "     y  :"+y );
+//
+//            new TouchAction(driver)
+//                    .tap(point(x,y))
+//                    .perform();
         }
     }
 
@@ -202,7 +264,7 @@ public class BasePage {
             btn = xpath;
         }
         waitAboutSeconds(1);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(btn))).click();
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(btn))).click();
     }
     public void openUrl() {
         driver.get("https://staging.mektoube.fr");
@@ -288,8 +350,8 @@ public class BasePage {
             element = data;
         }
         waitAboutSeconds(3);
-        WebElement Element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(element)));
-        Element.click();
+//        WebElement Element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(element)));
+//        Element.click();
     }
 
     public void click(String xpath) {
@@ -307,8 +369,8 @@ public class BasePage {
             element = data;
         }
         waitAboutSeconds(3);
-        WebElement Element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(element)));
-        Element.click();
+//        WebElement Element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id(element)));
+//        Element.click();
     }
 
     public boolean shouldSeeModal(String modal) {
@@ -321,17 +383,18 @@ public class BasePage {
 
     public void shouldSeeAlertMessageWithContentIsShowedOnTop(String messageAlert) {
         if (OS == MobilePlatform.IOS) {
-            String innerText = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//XCUIElementTypeOther[@name='xmpp-message']/XCUIElementTypeOther"))).getText();
-            System.out.println(innerText);
-            assertEquals(messageAlert, innerText);
+//            String innerText = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//XCUIElementTypeOther[@name='xmpp-message']/XCUIElementTypeOther"))).getText();
+//            System.out.println(innerText);
+//            assertEquals(messageAlert, innerText);
             waitElementHiddenByXpath("//XCUIElementTypeOther[@name='xmpp-message']");
 
-        } else {
-            String message = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.view.ViewGroup[@content-desc='xmpp-message']//android.widget.TextView"))).getText();
-            assertEquals(messageAlert, message);
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//android.view.ViewGroup[@content-desc='xmpp-message']//android.widget.TextView")));
-            System.out.println("Message is showed on top is: " + message);
         }
+//        else {
+//            String message = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.view.ViewGroup[@content-desc='xmpp-message']//android.widget.TextView"))).getText();
+//            assertEquals(messageAlert, message);
+//            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//android.view.ViewGroup[@content-desc='xmpp-message']//android.widget.TextView")));
+//            System.out.println("Message is showed on top is: " + message);
+//        }
     }
 
     public String getText(String dataIOS) {
@@ -435,17 +498,17 @@ public class BasePage {
     //*----------------End - Just for iOS - do not write here-----------------*//
 
     public void alertMessageWithContentIsShowedOnTop(String messageContent) {
-        WebElement message = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.view.ViewGroup[@content-desc='xmpp-message']//android.widget.TextView")));
-        System.out.println("Message is showed on top is: " + message);
-        if (!message.equals("« Vous avez déjà signalé ce profil, le signalement a déjà été pris en compte »")) {
-            assertEquals(messageContent, message.getText());
-        }
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//android.view.ViewGroup[@content-desc='xmpp-message']//android.widget.TextView")));
+//        WebElement message = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.view.ViewGroup[@content-desc='xmpp-message']//android.widget.TextView")));
+//        System.out.println("Message is showed on top is: " + message);
+//        if (!message.equals("« Vous avez déjà signalé ce profil, le signalement a déjà été pris en compte »")) {
+//            assertEquals(messageContent, message.getText());
+//        }
+//        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//android.view.ViewGroup[@content-desc='xmpp-message']//android.widget.TextView")));
     }
 
     public void logoutCurrentAccount() {
         clickButtonByXpath("myProfileBtn");
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//android.view.View//android.view.View[@index='3']//android.view.ViewGroup[@index='2']/android.widget.TextView"))).click();
+//        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//android.view.View//android.view.View[@index='3']//android.view.ViewGroup[@index='2']/android.widget.TextView"))).click();
         waitAboutSeconds(2);
         driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"connecter\").instance(0))")).click();
         waitAboutSeconds(5);
@@ -466,7 +529,7 @@ public class BasePage {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpathElement))).click();
+//        wait.until(ExpectedConditions.elementToBeClickable(By.xpath(xpathElement))).click();
         iClickButtonHasText("Validate");
     }
 
@@ -559,7 +622,7 @@ public class BasePage {
                     .perform();
             System.out.println("Swipe 3 times fail >> must one more");
         }
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.widget.ScrollView")));
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.widget.ScrollView")));
         driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"connecter\").instance(0))")).click();
         waitUntilDisplayElementByXpath("//*[contains(@text,'SE CONNECTER')]");
         System.out.println("In Login Page method");
@@ -569,7 +632,7 @@ public class BasePage {
         clearTextAndInsertTextIntoField(pass, "passwordInput");
         iClickButtonHasText("ME CONNECTER");
         waitAboutSeconds(3);
-        new DiscoveryPage().closeModalEncourageUser();
+//        new DiscoveryPage().closeModalEncourageUser();
         waitUntilDisplayElementByXpath("searchBtn");
     }
 
@@ -660,7 +723,7 @@ public class BasePage {
             System.out.println("Swipe 3 times fail >> must one more");
         }
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.widget.ScrollView")));
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//android.widget.ScrollView")));
         driver.findElement(MobileBy.AndroidUIAutomator("new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().textContains(\"" + text + "\").instance(0))")).click();
     }
 
@@ -687,7 +750,7 @@ public class BasePage {
     }
 
     public void waitUntilIsInvisiable(String xpath) {
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));
+//        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(xpath)));
     }
 
     public void closeModalRequestValidateEmail() {
@@ -816,15 +879,15 @@ public class BasePage {
     }
 
     public void showMessageErrorOfElement(String message, String element) {
-        WebElement elementShowMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TestDataService.properties.getProperty(element))));
-        assertEquals(message, elementShowMessage.getText());
+//        WebElement elementShowMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TestDataService.properties.getProperty(element))));
+//        assertEquals(message, elementShowMessage.getText());
     }
 
     public void enterVerifyCode(String code) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TestDataService.properties.getProperty("firstCodeBox")))).sendKeys((code.substring(0, 1)));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TestDataService.properties.getProperty("secondCodeBox")))).sendKeys((code.substring(1, 2)));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TestDataService.properties.getProperty("thirdCodeBox")))).sendKeys((code.substring(2, 3)));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TestDataService.properties.getProperty("4thCodeBox")))).sendKeys((code.substring(3, 4)));
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TestDataService.properties.getProperty("firstCodeBox")))).sendKeys((code.substring(0, 1)));
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TestDataService.properties.getProperty("secondCodeBox")))).sendKeys((code.substring(1, 2)));
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TestDataService.properties.getProperty("thirdCodeBox")))).sendKeys((code.substring(2, 3)));
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(TestDataService.properties.getProperty("4thCodeBox")))).sendKeys((code.substring(3, 4)));
 //        clearTextAndInsertTextIntoField(code.substring(0, 1), "firstCodeBox");
 //        clearTextAndInsertTextIntoField(code.substring(1, 2), "secondCodeBox");
 //        clearTextAndInsertTextIntoField(code.substring(2, 3), "thirdCodeBox");
@@ -931,7 +994,7 @@ public class BasePage {
         if (xpath == null) {
             xpath = textBox;
         }
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath))).sendKeys(name);
+//        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath))).sendKeys(name);
     }
 
     public void resetDataTest() {

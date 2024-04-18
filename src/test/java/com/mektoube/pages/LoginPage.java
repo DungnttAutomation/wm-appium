@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class LoginPage extends BasePage {
-    DiscoveryPage discovery = new DiscoveryPage();
+//    DiscoveryPage discovery = new DiscoveryPage();
     BasePage basePage = new BasePage();
 
     public void theUserClickOnLoginByPhoneNumberTab() {
@@ -24,6 +24,19 @@ public class LoginPage extends BasePage {
             basePage.click("loginByPhone");
         }
     }
+    public void login(String account, String password) throws InterruptedException {
+        basePage.openUrl();
+        basePage.waitUntilDisplayElementByXpath("MOBILE_BTN_LOGIN");
+        basePage.click("MOBILE_BTN_LOGIN");
+//        Thread.sleep(10000);
+        basePage.waitAboutSeconds(5);
+        basePage.webDriverWaitForElementPresentByCss("LOGIN_TXT_EMAIL",10);
+        basePage.sendKeysByCss("LOGIN_TXT_EMAIL", account);
+        basePage.sendKeysByCss("LOGIN_TXT_PASSWORD", password);
+        basePage.clickByCss("LOGIN_BTN");
+        basePage.untilJqueryIsDone(50L);
+    }
+
 
     public void iAmOnTheLoginPage() {
         waitForVisibilityOf(By.xpath("//*[contains(@text,'ME CONNECTER')]"), By.xpath("//*[contains(@text,'ME CONNECTER')]"));
@@ -42,36 +55,6 @@ public class LoginPage extends BasePage {
         System.out.println("End for");
     }
 
-    public void loginWithUsernameOrEmailAndPassword(String email, String password) {
-//        waitAboutSeconds(2);
-        waitDisplayButtonXpathAndClick("seConnecterBtn");
-//        waitAboutSeconds(2);
-        clearTextAndInsertTextIntoField(email, "emailInput");
-        clearTextAndInsertTextIntoField(password, "passwordInput");
-        waitDisplayButtonXpathAndClick("spaceBtn");
-        waitDisplayButtonXpathAndClick("loginButton");
-//        cmt cause new design doesn't show popup active permission
-        discovery.activeLocationPermissionAfterLoginSuccess();
-    }
-
-    public void iLoginWithAccountAndDisablePermission(String email, String pass, String location) {
-        if (email.contains("@")) {
-            int endIndex = email.indexOf("@");
-            DiscoveryPage.stack.push(email.substring(3, endIndex));
-        } else {
-            DiscoveryPage.stack.push(email);
-        }
-
-        clickButtonByXpath("seConnecterBtn");
-        clearTextAndInsertTextIntoField(email, "emailInput");
-        clearTextAndInsertTextIntoField(pass, "passwordInput");
-        waitDisplayButtonXpathAndClick("loginButton");
-
-        String OS = driver.getCapabilities().getCapability("platformVersion").toString();
-        System.out.println("Version :" + OS);
-        discovery.activeLocationPermissionAfterLoginSuccess();
-        System.out.println("Login success");
-    }
 
     public void iCheckErrorMessages() {
         if(OS==MobilePlatform.IOS){
@@ -100,14 +83,7 @@ public class LoginPage extends BasePage {
         }
     }
 
-    public void messagesErrorIsDisplay(String xpath) {
-        String error = TestDataService.properties.getProperty(xpath);
-        if (error == null) {
-            error = xpath;
-        }
-        String msgError = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(error))).getText();
-        System.out.println(msgError);
-    }
+
 
     public void loginWithEmailAndPassword(String email, String password) {
         if (OS == MobilePlatform.IOS) {
@@ -155,44 +131,7 @@ public class LoginPage extends BasePage {
         }
     }
 
-    public void loginWithPhoneNbOfCountryAndPassword(String phoneNb, String country, String password) {
-        iClickButtonHasText("SE CONNECTER");
-        //select flag's country
-        waitDisplayButtonXpathAndClick("loginByPhone");
-        waitUntilDisplayElementByXpath("flagCountry");
-        String countryCode = driver.findElement(By.xpath(TestDataService.properties.getProperty("countryCodePhoneNB"))).getText();
-        System.out.println(countryCode);
-        switch (countryCode) {
-            case "(+33)":
-                if (!"France".contains(country)) {
-                    selectFlagOfCountry(country);
-                }
-                break;
-            case "(+44)":
-                if (!"Royaume-Uni".contains(country)) {
-                    selectFlagOfCountry(country);
-                }
-                break;
-            case "(+84)":
-                if (!"VietNam".contains(country)) {
-                    selectFlagOfCountry(country);
-                }
-                break;
-        }
-        clearTextAndInsertTextIntoField(phoneNb, "emailInput");
-        clearTextAndInsertTextIntoField(password, "passwordInput");
-        iClickButtonHasText("ME CONNECTER");
-        discovery.activeLocationPermissionAfterLoginSuccess();
-        waitAboutSeconds(2);
-        ArrayList<MobileElement> elements = new ArrayList<>(driver.findElements(By.xpath("//*[contains(@text,'ENVOYER UN LIEN DE VALIDATION')]")));
-        if (elements.size() == 1) {
-            System.out.println("Account nay chua validate email");
-            clickButtonByXpath("closeBlackListModalBtn");
-        } else {
-            System.out.println("Account nay da validate email");
-        }
-        waitUntilDisplayElementByXpath("searchBtn");
-    }
+
 
     public void showErrorMessageWhenEnterInvalidPhoneNumber(String message, String element) {
         String xpathElement = TestDataService.properties.getProperty(element);

@@ -10,6 +10,22 @@ import java.io.IOException;
 
 public class BasePageSteps {
     BasePage basePage = new BasePage();
+    @When("open URL")
+    public void openUrl(){
+        basePage.openUrl();
+    }
+    @When("login")
+    public void login(){
+
+    }
+    @When("input login {string} {string}")
+    public void inputLogin(String element, String content){
+        basePage.sendKeysByCss(element,content);
+    }
+    @When("click {string}")
+    public void clickCss(String element){
+        basePage.clickByCss(element);
+    }
 
     @And("wait about {int} seconds")
     public void waitAboutSeconds(int second) { basePage.waitAboutSeconds(second); }
