@@ -267,7 +267,7 @@ public class BasePage {
 //        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(btn))).click();
     }
     public void openUrl() {
-        driver.get("https://staging.mektoube.fr");
+        driver.get("https://preprod.mektoube.fr");
     }
 
     public void buttonDontDisplay(String xpath) {
